@@ -14,7 +14,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="250dp"
         android:layout_gravity="bottom"
         android:background="@drawable/sheet_pullbar_background"
         >
@@ -26,7 +26,7 @@
             android:fontFamily="@font/montserrat"
             android:text="Add"
             android:textColor="@color/DarkSpringGreen"
-            android:textSize="35sp"
+            android:textSize="30sp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="20dp"
             app:layout_constraintVertical_chainStyle="packed"
