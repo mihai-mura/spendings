@@ -1,5 +1,6 @@
 package com.mwewghwai.moneyspend_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -45,6 +46,7 @@ public class SettingsActivity extends MainActivity {
             @Override
             public void onClick(View v) {
 
+                startActivity(new Intent(SettingsActivity.this, SetCategories.class));
             }
         });
 
