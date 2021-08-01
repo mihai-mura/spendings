@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     TextView category_header_text;
 
 //Variables
-    ArrayList<String> category_array = new ArrayList<>();
+    public ArrayList<String> category_array = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +74,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-        category_array.add("Gas");updateCategoryHeader();
-        category_array.add("Food");updateCategoryHeader();
-        category_array.add("Clothes");updateCategoryHeader();
-
-
+        category_array.add("des");
     }
 
     @Override
