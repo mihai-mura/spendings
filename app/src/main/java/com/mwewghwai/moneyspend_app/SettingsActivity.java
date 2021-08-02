@@ -33,7 +33,6 @@ public class SettingsActivity extends MainActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
 
-
                 }
                 else{
 
@@ -45,7 +44,6 @@ public class SettingsActivity extends MainActivity {
         set_categories.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 startActivity(new Intent(SettingsActivity.this, SetCategories.class));
             }
         });

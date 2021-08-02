@@ -3,6 +3,7 @@ package com.mwewghwai.moneyspend_app;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -11,13 +12,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-
 import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
 
 //Item declaration
+    DatabaseHelper dataBase;
     BottomSheetBehavior add_popup;
     BottomSheetBehavior category_popup;
     Button add_button;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     TextView category_header_text;
 
 //Variables
-    public ArrayList<String> category_array = new ArrayList<>();
+    public ArrayList<String> category_array_main = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_main);
 //Item link
+        dataBase = new DatabaseHelper(this);
         add_button = findViewById(R.id.add);
         category_button = findViewById(R.id.category_button);
         add_popup = BottomSheetBehavior.from(findViewById(R.id.add_bottom_sheet_root_layout));
@@ -46,9 +48,13 @@ public class MainActivity extends AppCompatActivity {
         add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
         category_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-//Category list adapter
-        ArrayAdapter category_array_adapter = new ArrayAdapter(this,R.layout.textcenter_listview,category_array);
-        category_list.setAdapter(category_array_adapter);
+//DataBase -> List
+        Cursor data = dataBase.getContentTable1();
+        while(data.moveToNext()){
+            category_array_main.add(data.getString(1));
+        }
+        ArrayAdapter category_list_adapter = new ArrayAdapter(this,R.layout.textcenter_listview,category_array_main);
+        category_list.setAdapter(category_list_adapter);
 
 //Buttons
         add_button.setOnClickListener(new View.OnClickListener() {
@@ -73,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        category_array.add("des");
     }
 
     @Override
@@ -94,9 +98,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    //CHANGE FOR DATABASE
     public void updateCategoryHeader(){
         category_header_text = findViewById(R.id.category_header_text);
-        if(category_array.isEmpty()){
+        if(category_array_main.isEmpty()){
             category_header_text.setText("No categories added");
         }
         else
