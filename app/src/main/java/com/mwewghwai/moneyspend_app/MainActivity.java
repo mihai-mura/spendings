@@ -28,13 +28,19 @@ public class MainActivity extends AppCompatActivity {
     TextView category_header_text;
 
 //Variables
-    public ArrayList<String> category_array_main = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_main);
+
+//Variables
+        final ArrayList<String> category_array = new ArrayList<>();
+        final ArrayAdapter category_add_list_adapter = new ArrayAdapter(this,R.layout.textcenter_listview,category_array);
+
+
 //Item link
         dataBase = new DatabaseHelper(this);
         add_button = findViewById(R.id.add);
@@ -48,19 +54,19 @@ public class MainActivity extends AppCompatActivity {
         add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
         category_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-//ToDo:make separate methode so the list updates when you are on the page ( put inside category_button)
-//DataBase -> List
-        Cursor data = dataBase.getContentTable1();
-        while(data.moveToNext()){
-            category_array_main.add(data.getString(1));
-        }
-        ArrayAdapter category_list_adapter = new ArrayAdapter(this,R.layout.textcenter_listview,category_array_main);
-        category_list.setAdapter(category_list_adapter);
-
 //Buttons
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //DataBase -> List
+                category_array.clear();
+                Cursor data = dataBase.getContentTable1();
+                while(data.moveToNext()){
+                    category_array.add(data.getString(1));
+                }
+                category_list.setAdapter(category_add_list_adapter);
+
                 add_popup.setState(BottomSheetBehavior.STATE_EXPANDED);
 
             }
@@ -69,7 +75,9 @@ public class MainActivity extends AppCompatActivity {
         category_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 category_popup.setState(BottomSheetBehavior.STATE_EXPANDED);
+
             }
         });
 
@@ -103,11 +111,6 @@ public class MainActivity extends AppCompatActivity {
 //ToDo:change updateCategoryHeader for database
     public void updateCategoryHeader(){
         category_header_text = findViewById(R.id.category_header_text);
-        if(category_array_main.isEmpty()){
-            category_header_text.setText("No categories added");
-        }
-        else
-            category_header_text.setText("Select category");
     }
 
 

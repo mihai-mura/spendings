@@ -28,7 +28,9 @@ public class SetCategories extends SettingsActivity {
     ListView category_add_list;
 
 //Variables
-    public ArrayList<String> category_array_set_cat = new ArrayList<>();
+    final ArrayList<String> category_array = new ArrayList<>();
+    final ArrayAdapter category_add_list_adapter = new ArrayAdapter(this,R.layout.textcenter_listview,category_array);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +47,8 @@ public class SetCategories extends SettingsActivity {
 //DataBase -> List
         Cursor data = dataBase.getContentTable1();
         while(data.moveToNext()){
-            category_array_set_cat.add(data.getString(1));
+            category_array.add(data.getString(1));
         }
-        final ArrayAdapter category_add_list_adapter = new ArrayAdapter(this,R.layout.textcenter_listview,category_array_set_cat);
         category_add_list.setAdapter(category_add_list_adapter);
 
 //AddButton

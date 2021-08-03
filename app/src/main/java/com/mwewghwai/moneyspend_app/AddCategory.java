@@ -54,7 +54,7 @@ public class AddCategory extends SetCategories {
     public void AddData(String category){
         boolean insertData = dataBase.addDataTable1(category);
         if(insertData == true){
-            Log.d("DataBase", "Inserted " + category + "to Category table");
+            Log.d("DataBase", "Inserted " + category + " to Category table");
             Toast.makeText(AddCategory.this, "Data inserted", Toast.LENGTH_SHORT).show();
         }
         else{
