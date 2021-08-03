@@ -1,6 +1,7 @@
 package com.mwewghwai.moneyspend_app;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,8 +29,14 @@ public class AddCategory extends SetCategories {
             @Override
             public void onClick(View v) {
                 String category = category_to_add.getText().toString();
-                AddData(category);
-                finish();
+                if(category.matches("")){
+                    //ToDo:better design for toast
+                    Toast.makeText(AddCategory.this, "Field empty!", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    AddData(category);
+                    finish();
+                }
             }
         });
 
@@ -42,15 +49,16 @@ public class AddCategory extends SetCategories {
 
     }
 
+//ToDo:better design for toast
     //AddData
     public void AddData(String category){
         boolean insertData = dataBase.addDataTable1(category);
         if(insertData == true){
-//TO CHANGE TO LOG
+            Log.d("DataBase", "Inserted " + category + "to Category table");
             Toast.makeText(AddCategory.this, "Data inserted", Toast.LENGTH_SHORT).show();
         }
         else{
-//TO CHANGE TO LOG
+            Log.d("DataBase", "Data insertion to Category table failed");
             Toast.makeText(AddCategory.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
         }
     }

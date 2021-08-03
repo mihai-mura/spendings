@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
         category_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
+//ToDo:make separate methode so the list updates when you are on the page ( put inside category_button)
 //DataBase -> List
         Cursor data = dataBase.getContentTable1();
         while(data.moveToNext()){
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //CHANGE FOR DATABASE
+//ToDo:change updateCategoryHeader for database
     public void updateCategoryHeader(){
         category_header_text = findViewById(R.id.category_header_text);
         if(category_array_main.isEmpty()){

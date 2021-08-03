@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.nfc.Tag;
+import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -51,5 +53,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor data = db.rawQuery("SELECT * FROM " + TABLE1_NAME, null);
         return data;
+    }
+
+    public boolean removeCategory(String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String del_query = "DELETE FROM " + TABLE1_NAME + " WHERE " + T1_COL2 + " = '" + name + "'";
+        db.execSQL(del_query);
+
+        return true;
     }
 }
