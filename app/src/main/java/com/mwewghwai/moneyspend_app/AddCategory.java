@@ -30,12 +30,18 @@ public class AddCategory extends SetCategories {
             public void onClick(View v) {
                 String category = category_to_add.getText().toString();
                 if(category.matches("")){
-                    //ToDo:better design for toast
+//ToDo:better design for toasts
                     Toast.makeText(AddCategory.this, "Field empty!", Toast.LENGTH_LONG).show();
                 }
                 else{
-                    AddData(category);
-                    finish();
+                    if(AddData(category) == true){
+                        finish();
+                    }
+                    else{
+                        Toast.makeText(AddCategory.this, "Category already exists", Toast.LENGTH_LONG).show();
+
+                    }
+
                 }
             }
         });
@@ -49,17 +55,29 @@ public class AddCategory extends SetCategories {
 
     }
 
-//ToDo:better design for toast
+//ToDo:better design for toasts
     //AddData
-    public void AddData(String category){
-        boolean insertData = dataBase.addDataTable1(category);
-        if(insertData == true){
-            Log.d("DataBase", "Inserted " + category + " to Category table");
-            Toast.makeText(AddCategory.this, "Data inserted", Toast.LENGTH_SHORT).show();
+    private boolean AddData(String category){
+        boolean itemExists = dataBase.itemExistsInCategories(category);
+
+        if(itemExists == false){
+            boolean insertData = dataBase.addDataCategories(category);
+            if(insertData == true){
+                Log.d("DataBase", "Inserted " + category + " to Category table");
+                Toast.makeText(AddCategory.this, "Data inserted", Toast.LENGTH_SHORT).show();
+
+                return true;
+            }
+            else{
+                Log.d("DataBase", "Data insertion to Category table failed");
+                Toast.makeText(AddCategory.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+
+                return false;
+            }
+
         }
-        else{
-            Log.d("DataBase", "Data insertion to Category table failed");
-            Toast.makeText(AddCategory.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
-        }
+        else
+            return false;
+
     }
 }

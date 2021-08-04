@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addDataTable1(String category){
+    public boolean addDataCategories(String category){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -49,17 +49,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getContentTable1(){
+    public Cursor getContentCategories(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor data = db.rawQuery("SELECT * FROM " + TABLE1_NAME, null);
         return data;
     }
 
-    public boolean removeCategory(String name){
+    public boolean removeFromCategories(String name){
         SQLiteDatabase db = this.getWritableDatabase();
         String del_query = "DELETE FROM " + TABLE1_NAME + " WHERE " + T1_COL2 + " = '" + name + "'";
         db.execSQL(del_query);
 
         return true;
+    }
+
+    public boolean itemExistsInCategories(String itemToCheck){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE1_NAME + " WHERE " + T1_COL2 + " = '" + itemToCheck + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
+    public boolean isEmpty(String table){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String count = "SELECT count(*) FROM " + table;
+        Cursor cursor = db.rawQuery(count, null);
+        cursor.moveToFirst();
+        int item_count = cursor.getInt(0);
+        if(item_count>0){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 }

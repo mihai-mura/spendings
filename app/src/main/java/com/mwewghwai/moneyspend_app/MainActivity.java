@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
 //Variables
         final ArrayList<String> category_array = new ArrayList<>();
-        final ArrayAdapter category_add_list_adapter = new ArrayAdapter(this,R.layout.textcenter_listview,category_array);
+        final ArrayAdapter category_list_adapter = new ArrayAdapter(this,R.layout.textcenter_listview,category_array);
 
 
 //Item link
@@ -61,11 +61,13 @@ public class MainActivity extends AppCompatActivity {
 
                 //DataBase -> List
                 category_array.clear();
-                Cursor data = dataBase.getContentTable1();
+                Cursor data = dataBase.getContentCategories();
                 while(data.moveToNext()){
                     category_array.add(data.getString(1));
                 }
-                category_list.setAdapter(category_add_list_adapter);
+                category_list.setAdapter(category_list_adapter);
+
+                updateCategoryHeader();
 
                 add_popup.setState(BottomSheetBehavior.STATE_EXPANDED);
 
@@ -90,6 +92,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    private void updateCategoryHeader(){
+        category_header_text = findViewById(R.id.category_header_text);
+        if(dataBase.isEmpty("Categories")){
+            category_header_text.setText("No categories added");
+        }
+        else{
+            category_header_text.setText("Select category");
+        }
+    }
+
     @Override
     public void onBackPressed() {
         add_popup = BottomSheetBehavior.from(findViewById(R.id.add_bottom_sheet_root_layout));
@@ -106,12 +119,4 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-
-//ToDo:change updateCategoryHeader for database
-    public void updateCategoryHeader(){
-        category_header_text = findViewById(R.id.category_header_text);
-    }
-
-
 }
