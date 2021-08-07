@@ -59,8 +59,7 @@ public class SetCategories extends SettingsActivity {
                 final Object item = category_list_adapter.getItem(position);
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(SetCategories.this)
-                        .setTitle("Delete category")
-                        .setMessage("Delete " + item.toString())
+                        .setTitle("Delete " + item.toString())
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dataBase.removeFromCategories(item.toString());

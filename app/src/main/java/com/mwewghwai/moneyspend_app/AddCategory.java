@@ -2,10 +2,13 @@ package com.mwewghwai.moneyspend_app;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.FrameLayout;
+
+import com.google.android.material.snackbar.Snackbar;
 
 public class AddCategory extends SetCategories {
 
@@ -30,16 +33,20 @@ public class AddCategory extends SetCategories {
             public void onClick(View v) {
                 String category = category_to_add.getText().toString();
                 if(category.matches("")){
-//ToDo:better design for toasts
-                    Toast.makeText(AddCategory.this, "Field empty!", Toast.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.add_category_layout_root), "Field empty!", Snackbar.LENGTH_LONG).show();
                 }
                 else{
                     if(AddData(category) == true){
                         finish();
                     }
                     else{
-                        Toast.makeText(AddCategory.this, "Category already exists", Toast.LENGTH_LONG).show();
-
+                        //snackbar top
+                        Snackbar snack = Snackbar.make(findViewById(R.id.add_category_layout_root), "Category already exists!", Snackbar.LENGTH_LONG);
+                        View view = snack.getView();
+                        FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
+                        params.gravity = Gravity.TOP;
+                        view.setLayoutParams(params);
+                        snack.show();
                     }
 
                 }
@@ -55,7 +62,6 @@ public class AddCategory extends SetCategories {
 
     }
 
-//ToDo:better design for toasts
     //AddData
     private boolean AddData(String category){
         boolean itemExists = dataBase.itemExistsInCategories(category);
@@ -64,13 +70,13 @@ public class AddCategory extends SetCategories {
             boolean insertData = dataBase.addDataCategories(category);
             if(insertData == true){
                 Log.d("DataBase", "Inserted " + category + " to Category table");
-                Toast.makeText(AddCategory.this, "Data inserted", Toast.LENGTH_SHORT).show();
 
                 return true;
             }
             else{
                 Log.d("DataBase", "Data insertion to Category table failed");
-                Toast.makeText(AddCategory.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                Snackbar.make(findViewById(R.id.add_category_layout_root), "Something went wrong!", Snackbar.LENGTH_LONG).show();
+
 
                 return false;
             }
