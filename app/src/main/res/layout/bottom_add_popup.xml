@@ -14,7 +14,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="300dp"
         android:layout_gravity="bottom"
         android:background="@drawable/sheet_pullbar_background"
         >
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat"
-            android:text="Add"
+            android:text="Add what you spent"
             android:textColor="@color/DarkSpringGreen"
             android:textSize="30sp"
             android:layout_marginBottom="10dp"
@@ -37,6 +37,36 @@
             app:layout_constraintVertical_bias="0.1"
             />
 
+<!--ToDo:change active state for toggle-->
+        <ToggleButton
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/cash_button"
+            android:background="@drawable/ic_cash"
+            android:textOff="off"
+            android:textOn="on"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintBottom_toTopOf="@+id/introduce_ammount"
+            app:layout_constraintEnd_toStartOf="@+id/card_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/add_text"
+            />
+
+        <ToggleButton
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/card_button"
+            android:background="@drawable/ic_card"
+            android:textOff="off"
+            android:textOn="on"
+            app:layout_constraintBottom_toTopOf="@+id/introduce_ammount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cash_button"
+            app:layout_constraintTop_toBottomOf="@id/add_text"
+            />
+
         <EditText
             android:id="@+id/introduce_ammount"
             android:layout_width="wrap_content"
@@ -44,7 +74,7 @@
             android:inputType="number"
             android:layout_marginBottom="10dp"
             android:gravity="center_horizontal"
-            android:hint="ammount"
+            android:hint="Ammount"
             android:textSize="25sp"
             android:background="#ffffff"
             android:fontFamily="@font/montserrat"
@@ -62,6 +92,8 @@
             android:layout_height="40dp"
             android:background="@drawable/category_button_background"
             android:text="Category"
+            android:textAllCaps="false"
+            android:textSize="20sp"
             android:fontFamily="@font/montserrat"
             android:textAlignment="center"
             app:layout_constraintBottom_toTopOf="@+id/introduce_note"
@@ -75,9 +107,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:layout_marginBottom="10dp"
             android:gravity="center_horizontal"
-            android:hint="note"
+            android:hint="Note"
             android:fontFamily="@font/montserrat"
             android:cursorVisible="false"
             android:textSize="25sp"
@@ -85,7 +116,24 @@
             app:layout_constraintTop_toBottomOf="@+id/category_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/spent_add_button"
+            />
+
+        <Button
+            android:id="@+id/spent_add_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:text="Add"
+            android:textAllCaps="false"
+            android:fontFamily="@font/montserrat"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:textColor="@color/DarkSpringGreen"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/introduce_note"
             />
 
 

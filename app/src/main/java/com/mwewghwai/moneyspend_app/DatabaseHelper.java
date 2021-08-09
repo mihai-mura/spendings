@@ -5,16 +5,22 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.nfc.Tag;
 import android.util.Log;
+
+import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "Records";
     public static final String TABLE1_NAME = "Categories";
-    public static final String TABLE2_NAME = "";
+    public static final String TABLE2_NAME = "Spent";
     public static final String COL1 = "ID";
     public static final String T1_COL2 = "category";
+    public static final String T2_COL2 = "type";// 0 is cash, 1 is card
+    public static final String T2_COL3 = "ammount";
+    public static final String T2_COL4 = "category";
+    public static final String T2_COL5 = "note";
+    public static final String T2_COL6 = "date";
 
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, 1);
@@ -24,15 +30,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTable1 = "CREATE TABLE " + TABLE1_NAME + "(" + COL1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + T1_COL2 + " TEXT)";
+        String createTable2 = "CREATE TABLE " + TABLE2_NAME + "(" + COL1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + T2_COL2 + " INTEGER, " + T2_COL3 + " FLOAT, " +
+                T2_COL4 + " TEXT, " + T2_COL5 + " TEXT, " + T2_COL6 + " TEXT)";
         db.execSQL(createTable1);
+        db.execSQL(createTable2);
+        Log.d("DataBase", "Created tables");
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE1_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE2_NAME);
         onCreate(db);
     }
+
 
     public boolean addDataCategories(String category){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -41,6 +53,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(T1_COL2, category);
 
         long result = db.insert(TABLE1_NAME, null, values);
+        if(result == -1){
+            return  false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    public boolean addDataSpent(boolean type, float ammount, String category, String note, Date date){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        if(type == false){
+            values.put(T2_COL2, 0);
+        }
+        else
+            values.put(T2_COL2, 1);
+
+        values.put(T2_COL3, ammount);
+        values.put(T2_COL4, category);
+        values.put(T2_COL5, note);
+        values.put(T2_COL6, String.valueOf(date));
+
+        long result = db.insert(TABLE2_NAME, null, values);
         if(result == -1){
             return  false;
         }

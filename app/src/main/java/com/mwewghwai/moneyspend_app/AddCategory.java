@@ -36,7 +36,7 @@ public class AddCategory extends SetCategories {
                     Snackbar.make(findViewById(R.id.add_category_layout_root), "Field empty!", Snackbar.LENGTH_LONG).show();
                 }
                 else{
-                    if(AddData(category) == true){
+                    if(addData(category) == true){
                         finish();
                     }
                     else{
@@ -63,20 +63,19 @@ public class AddCategory extends SetCategories {
     }
 
     //AddData
-    private boolean AddData(String category){
+    private boolean addData(String category){
         boolean itemExists = dataBase.itemExistsInCategories(category);
 
         if(itemExists == false){
             boolean insertData = dataBase.addDataCategories(category);
             if(insertData == true){
-                Log.d("DataBase", "Inserted " + category + " to Category table");
+                Log.d("DataBase", "Inserted to Category table: " + category);
 
                 return true;
             }
             else{
                 Log.d("DataBase", "Data insertion to Category table failed");
                 Snackbar.make(findViewById(R.id.add_category_layout_root), "Something went wrong!", Snackbar.LENGTH_LONG).show();
-
 
                 return false;
             }

@@ -49,7 +49,7 @@
         android:id="@+id/add_category_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/add_category_button_background"
+        android:background="@color/colorPrimary"
         android:text="Add Category"
         android:textAllCaps="false"
         android:fontFamily="@font/montserrat"
