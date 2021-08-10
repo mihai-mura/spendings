@@ -14,6 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -78,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
 //Buttons
 
-        //ToDo:stop bottom sheet from closing
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,25 +138,43 @@ public class MainActivity extends AppCompatActivity {
         spent_add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean type;
+                boolean type = false;
                 float ammount;
                 String category;
                 String note;
                 Date date;
 
-                if(cash_button.isChecked() == true){
+                if(cash_button.isChecked()){
                     type = false;
                 }
-                else
+                else if(card_button.isChecked())
                     type = true;
 
-                ammount = Float.valueOf(ammount_add.getText().toString());
-                category = String.valueOf(category_button.getText());
-                note = note_add.getText().toString();
-                date = Calendar.getInstance().getTime();
+                if((cash_button.isChecked() || card_button.isChecked()) && category_button.getText() != "Category" && ammount_add.getText().toString() != "") {
 
-                addData(type, ammount, category, note, date);
-                add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    ammount = Float.valueOf(ammount_add.getText().toString());
+                    category = String.valueOf(category_button.getText());
+                    note = note_add.getText().toString();
+                    date = Calendar.getInstance().getTime();
+
+                    addData(type, ammount, category, note, date);
+
+                    //reinitiate bottom sheet components
+                    cash_button.setChecked(false);
+                    cash_button.setClickable(true);
+                    card_button.setChecked(false);
+                    card_button.setClickable(true);
+                    ammount_add.setText("");
+                    category_button.setText("Category");
+                    note_add.setText("");
+
+                    add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+                }
+                else{
+                    //ChangeToasts
+                    Toast.makeText(MainActivity.this, "Enter all fields!", Toast.LENGTH_LONG).show();
+                }
 
             }
         });

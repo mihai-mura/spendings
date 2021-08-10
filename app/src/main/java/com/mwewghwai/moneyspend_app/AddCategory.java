@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -33,20 +34,16 @@ public class AddCategory extends SetCategories {
             public void onClick(View v) {
                 String category = category_to_add.getText().toString();
                 if(category.matches("")){
-                    Snackbar.make(findViewById(R.id.add_category_layout_root), "Field empty!", Snackbar.LENGTH_LONG).show();
+                    //ChangeToasts
+                    Toast.makeText(AddCategory.this, "Field empty!", Toast.LENGTH_LONG).show();
                 }
                 else{
                     if(addData(category) == true){
                         finish();
                     }
                     else{
-                        //snackbar top
-                        Snackbar snack = Snackbar.make(findViewById(R.id.add_category_layout_root), "Category already exists!", Snackbar.LENGTH_LONG);
-                        View view = snack.getView();
-                        FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
-                        params.gravity = Gravity.TOP;
-                        view.setLayoutParams(params);
-                        snack.show();
+                        //ChangeToasts
+                        Toast.makeText(AddCategory.this, "Category already exists!", Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -75,7 +72,8 @@ public class AddCategory extends SetCategories {
             }
             else{
                 Log.d("DataBase", "Data insertion to Category table failed");
-                Snackbar.make(findViewById(R.id.add_category_layout_root), "Something went wrong!", Snackbar.LENGTH_LONG).show();
+                //ChangeToasts
+                Toast.makeText(AddCategory.this, "Something went wrong!", Toast.LENGTH_LONG);
 
                 return false;
             }
