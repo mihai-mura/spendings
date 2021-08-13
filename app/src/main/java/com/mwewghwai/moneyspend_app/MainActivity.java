@@ -2,15 +2,16 @@ package com.mwewghwai.moneyspend_app;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import android.widget.ToggleButton;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,12 +35,13 @@ public class MainActivity extends AppCompatActivity {
     Button add_button;
     Button category_button;
     Button settings_button;
-    Button spent_add_button;
+    Button expenses_button;
+    Button expenses_add_button;
     ToggleButton cash_button;
     ToggleButton card_button;
     ListView category_list;
     TextView category_header_text;
-    EditText ammount_add;
+    EditText amount_add;
     EditText note_add;
 
 //Variables
@@ -63,11 +66,12 @@ public class MainActivity extends AppCompatActivity {
         category_popup = BottomSheetBehavior.from(findViewById(R.id.category_bottom_sheet_root_layout));
         category_list = findViewById(R.id.category_list);
         settings_button = findViewById(R.id.settings);
-        spent_add_button = findViewById(R.id.spent_add_button);
+        expenses_add_button = findViewById(R.id.expenses_add_button);
         cash_button = findViewById(R.id.cash_button);
         card_button = findViewById(R.id.card_button);
-        ammount_add = findViewById(R.id.introduce_ammount);
+        amount_add = findViewById(R.id.introduce_amount);
         note_add = findViewById(R.id.introduce_note);
+        expenses_button = findViewById(R.id.expenses);
 
 //Initializations
         add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -85,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //DataBase -> List
                 category_array.clear();
-                Cursor data = dataBase.getContentCategories();
+                Cursor data = dataBase.getContent("Categories");
                 while(data.moveToNext()){
                     category_array.add(data.getString(1));
                 }
@@ -135,14 +139,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        spent_add_button.setOnClickListener(new View.OnClickListener() {
+        expenses_add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean type = false;
-                float ammount;
+                float amount;
                 String category;
                 String note;
-                Date date;
+                String date;
+                String time;
 
                 if(cash_button.isChecked()){
                     type = false;
@@ -150,24 +155,31 @@ public class MainActivity extends AppCompatActivity {
                 else if(card_button.isChecked())
                     type = true;
 
-                if((cash_button.isChecked() || card_button.isChecked()) && category_button.getText() != "Category" && ammount_add.getText().toString() != "") {
+                if((cash_button.isChecked() || card_button.isChecked()) && category_button.getText() != "Category" && amount_add.getText().toString() != "") {
 
-                    ammount = Float.valueOf(ammount_add.getText().toString());
+                    amount = Float.valueOf(amount_add.getText().toString());
                     category = String.valueOf(category_button.getText());
                     note = note_add.getText().toString();
-                    date = Calendar.getInstance().getTime();
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat format_date = new SimpleDateFormat("d MMM yyyy");
+                    SimpleDateFormat format_time = new SimpleDateFormat("HH:mm");
+                    date = format_date.format(calendar.getTime());
+                    time = format_time.format(calendar.getTime());
 
-                    addData(type, ammount, category, note, date);
+                    addData(type, amount, category, note, date, time);
 
                     //reinitiate bottom sheet components
                     cash_button.setChecked(false);
                     cash_button.setClickable(true);
                     card_button.setChecked(false);
                     card_button.setClickable(true);
-                    ammount_add.setText("");
+                    amount_add.setText("");
                     category_button.setText("Category");
                     note_add.setText("");
 
+                    //ToDo:fix bottom sheet closing
+                    add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    hideKeyboard(MainActivity.this);
                     add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
                 }
@@ -176,6 +188,13 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Enter all fields!", Toast.LENGTH_LONG).show();
                 }
 
+            }
+        });
+
+        expenses_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ExpensesActivity.class));
             }
         });
 
@@ -188,14 +207,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void addData(boolean type, float ammount, String category, String note, Date date){
-        boolean insertData = dataBase.addDataSpent(type, ammount, category, note, date);
+    private void addData(boolean type, float amount, String category, String note, String date, String time){
+        boolean insertData = dataBase.addDataExpenses(type, amount, category, note, date, time);
         if(insertData == true){
-            Log.d("DataBase", "Inserted to Spent table: type: " + type + ", ammount: " + ammount + ", category: " + category + ", note: " + note + ", date: " + date);
+            Log.d("DataBase", "Inserted to Expenses table: type: " + type + ", amount: " + amount + ", category: " + category + ", note: " + note + ", date and time: " + date + " "+ time);
 
         }
         else{
-            Log.d("DataBase", "Data insertion to Spent table failed");
+            Log.d("DataBase", "Data insertion to Expenses table failed");
 
         }
 
@@ -227,5 +246,16 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

@@ -30,7 +30,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="20dp"
             app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintBottom_toTopOf="@+id/introduce_ammount"
+            app:layout_constraintBottom_toTopOf="@+id/introduce_amount"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -46,7 +46,7 @@
             android:textOff=""
             android:textOn=""
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintBottom_toTopOf="@+id/introduce_ammount"
+            app:layout_constraintBottom_toTopOf="@+id/introduce_amount"
             app:layout_constraintEnd_toStartOf="@+id/card_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/add_text"
@@ -60,17 +60,17 @@
             android:background="@drawable/card_selector"
             android:textOff=""
             android:textOn=""
-            app:layout_constraintBottom_toTopOf="@+id/introduce_ammount"
+            app:layout_constraintBottom_toTopOf="@+id/introduce_amount"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/cash_button"
             app:layout_constraintTop_toBottomOf="@id/add_text"
             />
 
         <EditText
-            android:id="@+id/introduce_ammount"
+            android:id="@+id/introduce_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:layout_marginBottom="10dp"
             android:gravity="center_horizontal"
             android:hint="Ammount"
@@ -98,7 +98,7 @@
             app:layout_constraintBottom_toTopOf="@+id/introduce_note"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/introduce_ammount"
+            app:layout_constraintTop_toBottomOf="@+id/introduce_amount"
             />
 
         <EditText
@@ -115,11 +115,11 @@
             app:layout_constraintTop_toBottomOf="@+id/category_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/spent_add_button"
+            app:layout_constraintBottom_toTopOf="@id/expenses_add_button"
             />
 
         <Button
-            android:id="@+id/spent_add_button"
+            android:id="@+id/expenses_add_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"

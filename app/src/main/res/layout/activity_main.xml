@@ -54,7 +54,7 @@
             />
 
         <Button
-            android:id="@+id/list"
+            android:id="@+id/expenses"
             android:layout_width="36dp"
             android:layout_height="24dp"
             android:background="@drawable/ic_list"

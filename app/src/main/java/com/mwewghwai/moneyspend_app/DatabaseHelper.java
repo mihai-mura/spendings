@@ -13,14 +13,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "Records";
     public static final String TABLE1_NAME = "Categories";
-    public static final String TABLE2_NAME = "Spent";
+    public static final String TABLE2_NAME = "Expenses";
     public static final String COL1 = "ID";
     public static final String T1_COL2 = "category";
     public static final String T2_COL2 = "type";// 0 is cash, 1 is card
-    public static final String T2_COL3 = "ammount";
+    public static final String T2_COL3 = "amount";
     public static final String T2_COL4 = "category";
     public static final String T2_COL5 = "note";
     public static final String T2_COL6 = "date";
+    public static final String T2_COL7 = "time";
 
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, 1);
@@ -31,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String createTable1 = "CREATE TABLE " + TABLE1_NAME + "(" + COL1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + T1_COL2 + " TEXT)";
         String createTable2 = "CREATE TABLE " + TABLE2_NAME + "(" + COL1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + T2_COL2 + " INTEGER, " + T2_COL3 + " FLOAT, " +
-                T2_COL4 + " TEXT, " + T2_COL5 + " TEXT, " + T2_COL6 + " TEXT)";
+                T2_COL4 + " TEXT, " + T2_COL5 + " TEXT, " + T2_COL6 + " TEXT, " + T2_COL7 + " TEXT)";
         db.execSQL(createTable1);
         db.execSQL(createTable2);
         Log.d("DataBase", "Created tables");
@@ -61,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean addDataSpent(boolean type, float ammount, String category, String note, Date date){
+    public boolean addDataExpenses(boolean type, float amount, String category, String note, String date, String time){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -71,10 +72,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else
             values.put(T2_COL2, 1);
 
-        values.put(T2_COL3, ammount);
+        values.put(T2_COL3, amount);
         values.put(T2_COL4, category);
         values.put(T2_COL5, note);
-        values.put(T2_COL6, String.valueOf(date));
+        values.put(T2_COL6, date);
+        values.put(T2_COL7, time);
+
+
 
         long result = db.insert(TABLE2_NAME, null, values);
         if(result == -1){
@@ -85,9 +89,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getContentCategories(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor data = db.rawQuery("SELECT * FROM " + TABLE1_NAME, null);
+    public Cursor getContent(String table){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor data = null;
+        if(db != null) {
+            data = db.rawQuery("SELECT * FROM " + table, null);
+        }
         return data;
     }
 
