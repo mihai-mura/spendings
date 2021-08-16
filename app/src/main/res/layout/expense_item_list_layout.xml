@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="108dp">
 
+<!--    ToDo:shadow-->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,12 +14,101 @@
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="13dp"
         app:cardCornerRadius="20dp"
-        android:elevation="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:id="@+id/recycler_expense_cash_card_view"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/ic_card_outline"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/recycler_expense_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginBottom="5dp"
+                android:text="--- RON"
+                android:fontFamily="@font/montserrat"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintBottom_toTopOf="@id/recycler_expense_date"
+                app:layout_constraintStart_toEndOf="@+id/recycler_expense_cash_card_view"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/recycler_expense_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="19 Apr 2021"
+                android:fontFamily="@font/montserrat"
+                android:textSize="12sp"
+                android:textColor="@color/Grey2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/recycler_expense_cash_card_view"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_expense_amount"
+                />
+
+            <TextView
+                android:id="@+id/recycler_expense_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:text="19:12"
+                android:fontFamily="@font/montserrat"
+                android:textSize="12sp"
+                android:textColor="@color/Grey2"
+                app:layout_constraintStart_toEndOf="@id/recycler_expense_date"
+                app:layout_constraintTop_toBottomOf="@id/recycler_expense_amount"
+                />
+
+            <TextView
+                android:id="@+id/recycler_expense_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="5dp"
+                android:text="Category"
+                android:fontFamily="@font/montserrat"
+                android:textSize="18sp"
+                android:textColor="@color/Grey2"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintBottom_toTopOf="@+id/recycler_expense_note"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/recycler_expense_note"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="30dp"
+                android:text="Note"
+                android:fontFamily="@font/montserrat"
+                android:textSize="14sp"
+                android:textColor="@color/Grey2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recycler_expense_category"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 

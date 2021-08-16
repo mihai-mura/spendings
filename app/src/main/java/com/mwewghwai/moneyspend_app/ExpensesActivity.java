@@ -3,23 +3,21 @@ package com.mwewghwai.moneyspend_app;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ExpensesActivity extends MainActivity {
 
 //Item declaration
     DatabaseHelper dataBase;
+    RecyclerViewCustomAdapter customAdapter;
     Button back_arrow;
     Button calendar_button;
     TextView expenses_ammount;
@@ -82,7 +80,13 @@ public class ExpensesActivity extends MainActivity {
                     type.add(true);
                 }
 
-                amount.add(String.valueOf(data.getFloat(2)));
+
+                if(data.getFloat(2) == data.getInt(2)) {
+                    amount.add(String.valueOf(data.getInt(2)));
+                }
+                else{
+                    amount.add(String.valueOf(data.getFloat(2)));
+                }
                 category.add(data.getString(3));
                 note.add(data.getString(4));
                 date.add(data.getString(5));
@@ -90,6 +94,14 @@ public class ExpensesActivity extends MainActivity {
 
             }
         }
+
+        //without this recyclerView does not show
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        expenses_recyclerView.setLayoutManager(llm);
+
+        customAdapter = new RecyclerViewCustomAdapter(ExpensesActivity.this, type, amount, category, note, date, time);
+        expenses_recyclerView.setAdapter(customAdapter);
 
 
 //Buttons
