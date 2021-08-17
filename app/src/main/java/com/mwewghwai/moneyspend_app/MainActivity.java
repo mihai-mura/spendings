@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     TextView category_header_text;
     EditText amount_add;
     EditText note_add;
+    TextView monthly_spent_text;
 
 //Variables
 
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         amount_add = findViewById(R.id.introduce_amount);
         note_add = findViewById(R.id.introduce_note);
         expenses_button = findViewById(R.id.expenses);
+        monthly_spent_text = findViewById(R.id.monthly_spend_text);
 
 //Initializations
         add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -80,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         cash_button.setClickable(true);
         card_button.setChecked(false);
         card_button.setClickable(true);
+
+        updateAmountTextView("thisMonth");
 
 //Buttons
 
@@ -220,6 +224,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    private void updateAmountTextView(String interval){
+        float amount = dataBase.getAmount(interval);
+        if(amount == (int)amount){
+            monthly_spent_text.setText((int)amount + " RON");
+        }
+        else
+            monthly_spent_text.setText(amount + " RON");
+
+    }
 
     private void updateCategoryHeader(){
         category_header_text = findViewById(R.id.category_header_text);

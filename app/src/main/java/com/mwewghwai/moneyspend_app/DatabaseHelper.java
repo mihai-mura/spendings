@@ -139,6 +139,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public float getAmount(String interval){
+        SQLiteDatabase db = this.getWritableDatabase();
+        float amount = 0;
+        String query;
+        Calendar calendar =Calendar.getInstance();
+        SimpleDateFormat format_year = new SimpleDateFormat("yyyy");
+        SimpleDateFormat format_month = new SimpleDateFormat("MMM");
+        SimpleDateFormat format_day = new SimpleDateFormat("d");
+        String curent_year = format_year.format(calendar.getTime());
+        String curent_month = format_month.format(calendar.getTime());
+        String curent_day = format_day.format(calendar.getTime());
+        if(interval == null){
+            query = "SELECT * FROM " + TABLE2_NAME;
+        }
+        else if(interval.equals("thisMonth")){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL6 + " LIKE '%" + curent_month + " " + curent_year + "'";
+        }
+        else if(interval.equals("today")){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL6 + " LIKE '" + curent_day + " " + curent_month + " " + curent_year + "'";
+        }
+        else
+            query = null;
+
+        Cursor cursor = db.rawQuery(query, null);
+        while(cursor.moveToNext()){
+            amount += cursor.getFloat(2);
+        }
+        return amount;
+    }
+
     public boolean isEmpty(String table){
         SQLiteDatabase db = this.getWritableDatabase();
         String count = "SELECT count(*) FROM " + table;

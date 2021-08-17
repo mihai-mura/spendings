@@ -66,6 +66,7 @@ public class ExpensesActivity extends MainActivity {
         all_tbutton.setEnabled(true);
 
         populateRecycleView("thisMonth");
+        updateAmountTextView("thisMonth");
 
 
 //Buttons
@@ -125,6 +126,7 @@ public class ExpensesActivity extends MainActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     populateRecycleView("today");
+                    updateAmountTextView("today");
 
                 }
             }
@@ -135,6 +137,7 @@ public class ExpensesActivity extends MainActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     populateRecycleView("thisMonth");
+                    updateAmountTextView("thisMonth");
 
                 }
             }
@@ -145,6 +148,7 @@ public class ExpensesActivity extends MainActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     populateRecycleView(null);
+                    updateAmountTextView(null);
 
                 }
             }
@@ -201,6 +205,16 @@ public class ExpensesActivity extends MainActivity {
 
         customAdapter = new RecyclerViewCustomAdapter(ExpensesActivity.this, type, amount, category, note, date, time);
         expenses_recyclerView.setAdapter(customAdapter);
+    }
+
+    private void updateAmountTextView(String interval){
+        float amount = dataBase.getAmount(interval);
+        if(amount == (int)amount){
+            expenses_ammount.setText((int)amount + " RON");
+        }
+        else
+            expenses_ammount.setText(amount + " RON");
+
     }
 
     @Override
