@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //DataBase -> List
                 category_array.clear();
-                Cursor data = dataBase.getContent("Categories");
+                Cursor data = dataBase.getContent("Categories", null);
                 while(data.moveToNext()){
                     category_array.add(data.getString(1));
                 }

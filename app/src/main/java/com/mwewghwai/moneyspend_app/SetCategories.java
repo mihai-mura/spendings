@@ -89,7 +89,7 @@ public class SetCategories extends SettingsActivity {
         final ArrayAdapter category_list_adapter = new ArrayAdapter(this,R.layout.textcenter_listview,category_array);
         category_array.clear();
         //DataBase -> List
-        Cursor data = dataBase.getContent("Categories");
+        Cursor data = dataBase.getContent("Categories", null);
         while(data.moveToNext()){
             category_array.add(data.getString(1));
         }

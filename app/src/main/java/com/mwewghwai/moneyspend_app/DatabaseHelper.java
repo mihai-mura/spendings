@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -89,11 +91,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getContent(String table){
+    public Cursor getContent(String table, String interval){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor data = null;
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat format_year = new SimpleDateFormat("yyyy");
+        SimpleDateFormat format_month = new SimpleDateFormat("MMM");
+        SimpleDateFormat format_day = new SimpleDateFormat("d");
+        String curent_year = format_year.format(calendar.getTime());
+        String curent_month = format_month.format(calendar.getTime());
+        String curent_day = format_day.format(calendar.getTime());
         if(db != null) {
-            data = db.rawQuery("SELECT * FROM " + table, null);
+            if(interval == null){
+                data = db.rawQuery("SELECT * FROM " + table, null);
+
+            }
+            else if(interval.equals("today")){
+                data = db.rawQuery("SELECT * FROM " + table + " WHERE " + T2_COL6 + " LIKE '" + curent_day + " " + curent_month + " " + curent_year + "'", null);
+
+            }
+            else if(interval.equals("thisMonth")){
+                data = db.rawQuery("SELECT * FROM " + table + " WHERE " + T2_COL6 + " LIKE '%" + curent_month + " " + curent_year + "'", null);
+
+            }
+
         }
         return data;
     }

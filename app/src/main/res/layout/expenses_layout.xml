@@ -94,7 +94,7 @@
 
             <ToggleButton
                 android:id="@+id/today_tbutton"
-                android:layout_width="120dp"
+                android:layout_width="110dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="2dp"
                 android:background="@drawable/three_toggle_button_selector"
@@ -112,7 +112,7 @@
 
             <ToggleButton
                 android:id="@+id/this_month_tbutton"
-                android:layout_width="120dp"
+                android:layout_width="110dp"
                 android:layout_height="30dp"
                 android:background="@drawable/three_toggle_button_selector"
                 android:textAllCaps="false"
@@ -128,7 +128,7 @@
 
             <ToggleButton
                 android:id="@+id/all_tbutton"
-                android:layout_width="120dp"
+                android:layout_width="110dp"
                 android:layout_height="30dp"
                 android:layout_marginRight="2dp"
                 android:background="@drawable/three_toggle_button_selector"
