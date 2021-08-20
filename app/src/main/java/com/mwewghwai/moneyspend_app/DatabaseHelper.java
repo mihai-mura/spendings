@@ -9,7 +9,6 @@ import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -119,12 +118,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public boolean removeFromCategories(String name){
+    public void removeFromCategories(String name){
         SQLiteDatabase db = this.getWritableDatabase();
         String del_query = "DELETE FROM " + TABLE1_NAME + " WHERE " + T1_COL2 + " = '" + name + "'";
         db.execSQL(del_query);
 
-        return true;
+    }
+
+    public void removeFromExpenses(String amount, String date, String time){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String del_query = "DELETE FROM " + TABLE2_NAME + " WHERE " + T2_COL3 + " = '" + amount + "' AND " + T2_COL6 + " = '" + date + "' AND " + T2_COL7 + " = '" + time + "'";
+        db.execSQL(del_query);
+
     }
 
     public boolean itemExistsInCategories(String itemToCheck){
@@ -139,7 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public float getAmount(String interval){
+    public float getAmount(String interval, String type){
         SQLiteDatabase db = this.getWritableDatabase();
         float amount = 0;
         String query;
@@ -150,15 +155,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String curent_year = format_year.format(calendar.getTime());
         String curent_month = format_month.format(calendar.getTime());
         String curent_day = format_day.format(calendar.getTime());
-        if(interval == null){
+
+        //anyType
+        if(interval == "" && type == ""){
             query = "SELECT * FROM " + TABLE2_NAME;
         }
-        else if(interval.equals("thisMonth")){
+        else if(interval == "thisMonth" && type == ""){
             query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL6 + " LIKE '%" + curent_month + " " + curent_year + "'";
         }
-        else if(interval.equals("today")){
+        else if(interval == "today" && type == ""){
             query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL6 + " LIKE '" + curent_day + " " + curent_month + " " + curent_year + "'";
         }
+
+        //cash
+        else if(interval == "" && type == "cash"){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL2 + " = 0";
+        }
+        else if(interval == "thisMonth" && type == "cash"){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL2 + " = 0 AND " + T2_COL6 + " LIKE '%" + curent_month + " " + curent_year + "'";
+        }
+        else if(interval == "today" && type == "cash"){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL2 + " = 0 AND " + T2_COL6 + " LIKE '" + curent_day + " " + curent_month + " " + curent_year + "'";
+        }
+
+        //card
+        else if(interval == "" && type == "card"){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL2 + " = 1";
+        }
+        else if(interval == "thisMonth" && type == "card"){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL2 + " = 1 AND " + T2_COL6 + " LIKE '%" + curent_month + " " + curent_year + "'";
+        }
+        else if(interval == "today" && type == "card"){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL2 + " = 1 AND " + T2_COL6 + " LIKE '" + curent_day + " " + curent_month + " " + curent_year + "'";
+        }
+
         else
             query = null;
 

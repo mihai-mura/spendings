@@ -1,5 +1,9 @@
 package com.mwewghwai.moneyspend_app;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -8,25 +12,28 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ExpensesActivity extends MainActivity {
+public class ExpensesActivity extends AppCompatActivity {
 
 //Item declaration
     DatabaseHelper dataBase;
     RecyclerViewCustomAdapter customAdapter;
     Button back_arrow;
     Button calendar_button;
-    TextView expenses_ammount;
+    TextView expenses_amount;
     ToggleButton today_tbutton;
     ToggleButton thisMonth_tbutton;
     ToggleButton all_tbutton;
     ConstraintLayout empty_state_layout;
     RecyclerView expenses_recyclerView;
+    TextView cash_amount_text;
+    TextView card_amount_text;
 
 //Variables
     ArrayList<Boolean> type = new ArrayList<>();
@@ -50,12 +57,14 @@ public class ExpensesActivity extends MainActivity {
         dataBase = new DatabaseHelper(this);
         back_arrow = findViewById(R.id.expenses_back_button);
         calendar_button = findViewById(R.id.calendar_button);
-        expenses_ammount = findViewById(R.id.expenses_layout_amount);
+        expenses_amount = findViewById(R.id.expenses_layout_amount);
         today_tbutton = findViewById(R.id.today_tbutton);
         thisMonth_tbutton = findViewById(R.id.this_month_tbutton);
         all_tbutton = findViewById(R.id.all_tbutton);
         empty_state_layout = findViewById(R.id.empty_state_layout);
         expenses_recyclerView = findViewById(R.id.expenses_recyclerView);
+        cash_amount_text = findViewById(R.id.cash_amount_text);
+        card_amount_text = findViewById(R.id.card_amount_text);
 
 //Initializations
         today_tbutton.setChecked(false);
@@ -66,7 +75,7 @@ public class ExpensesActivity extends MainActivity {
         all_tbutton.setEnabled(true);
 
         populateRecycleView("thisMonth");
-        updateAmountTextView("thisMonth");
+        updateAmountTextViews("thisMonth");
 
 
 //Buttons
@@ -126,7 +135,7 @@ public class ExpensesActivity extends MainActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     populateRecycleView("today");
-                    updateAmountTextView("today");
+                    updateAmountTextViews("today");
 
                 }
             }
@@ -137,7 +146,7 @@ public class ExpensesActivity extends MainActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     populateRecycleView("thisMonth");
-                    updateAmountTextView("thisMonth");
+                    updateAmountTextViews("thisMonth");
 
                 }
             }
@@ -148,12 +157,36 @@ public class ExpensesActivity extends MainActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     populateRecycleView(null);
-                    updateAmountTextView(null);
+                    updateAmountTextViews("");
 
                 }
             }
         });
 
+    }
+
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(today_tbutton.isChecked())
+                updateAmountTextViews("today");
+            if(thisMonth_tbutton.isChecked())
+                updateAmountTextViews("thisMonth");
+            if(all_tbutton.isChecked())
+                updateAmountTextViews("");
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(receiver, new IntentFilter(RecyclerViewCustomAdapter.BROADCAST_FILTER));
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(receiver);
+        super.onDestroy();
     }
 
     private void populateRecycleView(String interval){
@@ -207,19 +240,29 @@ public class ExpensesActivity extends MainActivity {
         expenses_recyclerView.setAdapter(customAdapter);
     }
 
-    private void updateAmountTextView(String interval){
-        float amount = dataBase.getAmount(interval);
+    private void updateAmountTextViews(String interval){
+        float amount = dataBase.getAmount(interval, "");
+        float cash_amount = dataBase.getAmount(interval, "cash");
+        float card_amount = dataBase.getAmount(interval, "card");
+
         if(amount == (int)amount){
-            expenses_ammount.setText((int)amount + " RON");
+            expenses_amount.setText((int)amount + " RON");
         }
         else
-            expenses_ammount.setText(amount + " RON");
+            expenses_amount.setText(amount + " RON");
 
-    }
+        if(cash_amount == (int)cash_amount){
+            cash_amount_text.setText((int)cash_amount + " RON");
+        }
+        else
+            cash_amount_text.setText(cash_amount + " RON");
 
-    @Override
-    public void onBackPressed() {
-        finish();
+        if(card_amount == (int)card_amount){
+            card_amount_text.setText((int)card_amount + " RON");
+        }
+        else
+            card_amount_text.setText(card_amount + " RON");
+
     }
 
 }

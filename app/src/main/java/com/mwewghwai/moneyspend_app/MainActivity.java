@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -171,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
                     time = format_time.format(calendar.getTime());
 
                     addData(type, amount, category, note, date, time);
+                    updateAmountTextView("thisMonth");
 
                     //reinitiate bottom sheet components
                     cash_button.setChecked(false);
@@ -181,10 +184,16 @@ public class MainActivity extends AppCompatActivity {
                     category_button.setText("Category");
                     note_add.setText("");
 
-                    //ToDo:fix bottom sheet closing
-                    add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     hideKeyboard(MainActivity.this);
-                    add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+                    //delay
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        }
+                    }, 100);
 
                 }
                 else{
@@ -211,6 +220,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        updateAmountTextView("thisMonth");
+    }
+
     private void addData(boolean type, float amount, String category, String note, String date, String time){
         boolean insertData = dataBase.addDataExpenses(type, amount, category, note, date, time);
         if(insertData == true){
@@ -226,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void updateAmountTextView(String interval){
-        float amount = dataBase.getAmount(interval);
+        float amount = dataBase.getAmount(interval, "");
         if(amount == (int)amount){
             monthly_spent_text.setText((int)amount + " RON");
         }

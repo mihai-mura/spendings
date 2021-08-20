@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="270dp"
+        android:layout_height="300dp"
         android:layout_gravity="top"
         android:orientation="vertical"
         android:background="@drawable/top_panel">
@@ -77,6 +77,72 @@
             android:textSize="28sp"
             android:fontFamily="@font/montserrat_bold"
             android:textColor="#000000"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/cash_amount_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:fontFamily="@font/montserrat"
+                android:gravity="center"
+                android:text="--- Ron"
+                android:textColor="@color/Grey2"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/card_amount_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Cash"
+                android:fontFamily="@font/montserrat"
+                android:textSize="14sp"
+                android:textColor="@color/Grey2"
+                app:layout_constraintStart_toStartOf="@id/cash_amount_text"
+                app:layout_constraintEnd_toEndOf="@id/cash_amount_text"
+                app:layout_constraintTop_toBottomOf="@id/cash_amount_text"
+                />
+
+            <TextView
+                android:id="@+id/card_amount_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="40dp"
+                android:fontFamily="@font/montserrat"
+                android:gravity="center"
+                android:text="--- Ron"
+                android:textColor="@color/Grey2"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cash_amount_text"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Card"
+                android:fontFamily="@font/montserrat"
+                android:textSize="14sp"
+                android:textColor="@color/Grey2"
+                app:layout_constraintStart_toStartOf="@id/card_amount_text"
+                app:layout_constraintEnd_toEndOf="@id/card_amount_text"
+                app:layout_constraintTop_toBottomOf="@id/card_amount_text"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Space
             android:layout_width="match_parent"
@@ -161,8 +227,8 @@
             android:visibility="invisible">
 
             <View
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:background="@drawable/ic_empty_state_box"
                 app:layout_constraintBottom_toTopOf="@+id/no_records_text"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -1,10 +1,14 @@
 package com.mwewghwai.moneyspend_app;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,7 +19,8 @@ import java.util.Collections;
 
 public class RecyclerViewCustomAdapter extends RecyclerView.Adapter<RecyclerViewCustomAdapter.ViewHolder> {
 
-
+    public static final String BROADCAST_FILTER = "RecycleViewCustomAdapter_broadcast_receiver_intent_filter";
+    private DatabaseHelper dataBase;
     private Context context;
     private ArrayList<Boolean> type;
     private ArrayList amount, category, note, date, time;
@@ -47,7 +52,7 @@ public class RecyclerViewCustomAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         if(!type.get(position)){
             holder.cash_card.setBackgroundResource(R.drawable.ic_cash_outline);
         }
@@ -60,6 +65,43 @@ public class RecyclerViewCustomAdapter extends RecyclerView.Adapter<RecyclerView
         holder.date.setText((CharSequence) date.get(position));
         holder.time.setText((CharSequence) time.get(position));
 
+        //ToDo:change delete dialog
+        holder.rootLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(context)
+                        .setTitle("Delete record")
+                        .setMessage(amount.get(position) + " RON\n" + category.get(position) + "\n" + date.get(position) + " " + time.get(position))
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dataBase = new DatabaseHelper(context);
+                                dataBase.removeFromExpenses((String) amount.get(position),(String) date.get(position),(String) time.get(position));
+                                Log.d("DataBase", "Removed from expenses " + amount.get(position) + " RON, from: " + date.get(position) + " " + time.get(position));
+                                type.remove(position);
+                                amount.remove(position);
+                                category.remove(position);
+                                note.remove(position);
+                                date.remove(position);
+                                time.remove(position);
+                                notifyItemRemoved(position);
+
+                                Intent i = new Intent(BROADCAST_FILTER);
+                                i.putExtra("item_deleted", true);
+                                context.sendBroadcast(i);
+
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                dialog.show();
+
+            }
+        });
+
     }
 
     @Override
@@ -71,6 +113,7 @@ public class RecyclerViewCustomAdapter extends RecyclerView.Adapter<RecyclerView
 
         View cash_card;
         TextView amount, category, note, date, time;
+        LinearLayout rootLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -80,6 +123,7 @@ public class RecyclerViewCustomAdapter extends RecyclerView.Adapter<RecyclerView
             note = itemView.findViewById(R.id.recycler_expense_note);
             date = itemView.findViewById(R.id.recycler_expense_date);
             time = itemView.findViewById(R.id.recycler_expense_time);
+            rootLayout = itemView.findViewById(R.id.recycler_item_root_layout);
         }
     }
 }
