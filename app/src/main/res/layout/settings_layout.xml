@@ -10,7 +10,7 @@
     android:background="@color/colorPrimary"
     tools:context=".SettingsActivity">
 
-    <Button
+    <android.widget.Button
         android:id="@+id/settings_back_button"
         android:layout_width="11.25dp"
         android:layout_height="20dp"

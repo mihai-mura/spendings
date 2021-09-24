@@ -1,14 +1,17 @@
 package com.mwewghwai.moneyspend_app;
 
+import android.app.DatePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -17,7 +20,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.datepicker.MaterialDatePicker;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class ExpensesActivity extends AppCompatActivity {
 
@@ -34,6 +41,7 @@ public class ExpensesActivity extends AppCompatActivity {
     RecyclerView expenses_recyclerView;
     TextView cash_amount_text;
     TextView card_amount_text;
+    TextView selected_date;
 
 //Variables
     ArrayList<Boolean> type = new ArrayList<>();
@@ -52,7 +60,6 @@ public class ExpensesActivity extends AppCompatActivity {
 //Variables
 
 
-
 //Item link
         dataBase = new DatabaseHelper(this);
         back_arrow = findViewById(R.id.expenses_back_button);
@@ -65,6 +72,7 @@ public class ExpensesActivity extends AppCompatActivity {
         expenses_recyclerView = findViewById(R.id.expenses_recyclerView);
         cash_amount_text = findViewById(R.id.cash_amount_text);
         card_amount_text = findViewById(R.id.card_amount_text);
+        selected_date = findViewById(R.id.selected_date_text);
 
 //Initializations
         today_tbutton.setChecked(false);
@@ -76,6 +84,47 @@ public class ExpensesActivity extends AppCompatActivity {
 
         populateRecycleView("thisMonth");
         updateAmountTextViews("thisMonth");
+        updateSelectedDate(null);
+
+        //
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                SimpleDateFormat format_date = new SimpleDateFormat("d MMM yyyy");
+                Calendar calendar = Calendar.getInstance();
+                String today = format_date.format(calendar.getTime());
+                String date;
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                date = format_date.format(calendar.getTime());
+
+                populateRecycleView(date);
+                updateAmountTextViews(date);
+                updateSelectedDate(date);
+
+                //three toggle update
+                if(date.equals(today)){
+                    today_tbutton.setChecked(true);
+                    today_tbutton.setEnabled(false);
+                    thisMonth_tbutton.setChecked(false);
+                    thisMonth_tbutton.setEnabled(true);
+                    all_tbutton.setChecked(false);
+                    all_tbutton.setEnabled(true);
+                }
+                else{
+                    today_tbutton.setChecked(false);
+                    today_tbutton.setEnabled(true);
+                    thisMonth_tbutton.setChecked(false);
+                    thisMonth_tbutton.setEnabled(true);
+                    all_tbutton.setChecked(false);
+                    all_tbutton.setEnabled(true);
+                }
+
+            }
+
+        };
 
 
 //Buttons
@@ -90,6 +139,9 @@ public class ExpensesActivity extends AppCompatActivity {
         calendar_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                new DatePickerDialog(ExpensesActivity.this, date, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                        .show();
 
             }
         });
@@ -136,6 +188,7 @@ public class ExpensesActivity extends AppCompatActivity {
                 if(isChecked){
                     populateRecycleView("today");
                     updateAmountTextViews("today");
+                    updateSelectedDate(null);
 
                 }
             }
@@ -147,6 +200,7 @@ public class ExpensesActivity extends AppCompatActivity {
                 if(isChecked){
                     populateRecycleView("thisMonth");
                     updateAmountTextViews("thisMonth");
+                    updateSelectedDate(null);
 
                 }
             }
@@ -158,6 +212,7 @@ public class ExpensesActivity extends AppCompatActivity {
                 if(isChecked){
                     populateRecycleView(null);
                     updateAmountTextViews("");
+                    updateSelectedDate(null);
 
                 }
             }
@@ -168,12 +223,20 @@ public class ExpensesActivity extends AppCompatActivity {
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            String interval = "";
             if(today_tbutton.isChecked())
-                updateAmountTextViews("today");
+                interval = "today";
             if(thisMonth_tbutton.isChecked())
-                updateAmountTextViews("thisMonth");
+                interval = "thisMonth";
             if(all_tbutton.isChecked())
-                updateAmountTextViews("");
+                interval = "";
+
+            updateAmountTextViews(interval);
+
+            Cursor data = dataBase.getContent("Expenses", interval);
+            if(data != null && data.getCount() == 0){
+                empty_state_layout.setVisibility(ConstraintLayout.VISIBLE);
+            }
         }
     };
 
@@ -263,6 +326,13 @@ public class ExpensesActivity extends AppCompatActivity {
         else
             card_amount_text.setText(card_amount + " RON");
 
+    }
+
+    private void updateSelectedDate(String date){
+        if(date == null)
+            selected_date.setText("");
+        else
+            selected_date.setText(date);
     }
 
 }

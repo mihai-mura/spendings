@@ -32,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTable1 = "CREATE TABLE " + TABLE1_NAME + "(" + COL1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + T1_COL2 + " TEXT)";
-        String createTable2 = "CREATE TABLE " + TABLE2_NAME + "(" + COL1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + T2_COL2 + " INTEGER, " + T2_COL3 + " FLOAT, " +
+        String createTable2 = "CREATE TABLE " + TABLE2_NAME + "(" + COL1 + " INTEGER PRIMARY KEY AUTOINCREMENT, " + T2_COL2 + " INTEGER, " + T2_COL3 + " STRING, " +
                 T2_COL4 + " TEXT, " + T2_COL5 + " TEXT, " + T2_COL6 + " TEXT, " + T2_COL7 + " TEXT)";
         db.execSQL(createTable1);
         db.execSQL(createTable2);
@@ -63,7 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean addDataExpenses(boolean type, float amount, String category, String note, String date, String time){
+    public boolean addDataExpenses(boolean type, String amount, String category, String note, String date, String time){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -112,6 +112,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             else if(interval.equals("thisMonth")){
                 data = db.rawQuery("SELECT * FROM " + table + " WHERE " + T2_COL6 + " LIKE '%" + curent_month + " " + curent_year + "'", null);
 
+            }
+            else{
+                data = db.rawQuery("SELECT * FROM " + table + " WHERE " + T2_COL6 + " LIKE '" + interval + "'", null);
             }
 
         }
@@ -166,6 +169,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else if(interval == "today" && type == ""){
             query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL6 + " LIKE '" + curent_day + " " + curent_month + " " + curent_year + "'";
         }
+        //for date picker
+        else if(type == ""){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL6 + " LIKE '" + interval + "'";
+        }
+
 
         //cash
         else if(interval == "" && type == "cash"){
@@ -177,6 +185,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else if(interval == "today" && type == "cash"){
             query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL2 + " = 0 AND " + T2_COL6 + " LIKE '" + curent_day + " " + curent_month + " " + curent_year + "'";
         }
+        //for date picker
+        else if(type == "cash"){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL6 + " LIKE '" + interval + "' AND " + T2_COL2 + " = 0";
+        }
 
         //card
         else if(interval == "" && type == "card"){
@@ -187,6 +199,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         else if(interval == "today" && type == "card"){
             query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL2 + " = 1 AND " + T2_COL6 + " LIKE '" + curent_day + " " + curent_month + " " + curent_year + "'";
+        }
+        //for date picker
+        else if(type == "card"){
+            query = "SELECT * FROM " + TABLE2_NAME + " WHERE " + T2_COL6 + " LIKE '" + interval + "' AND " + T2_COL2 + " = 1";
         }
 
         else

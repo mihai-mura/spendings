@@ -72,12 +72,12 @@ public class RecyclerViewCustomAdapter extends RecyclerView.Adapter<RecyclerView
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(context)
                         .setTitle("Delete record")
-                        .setMessage(amount.get(position) + " RON\n" + category.get(position) + "\n" + date.get(position) + " " + time.get(position))
+                        .setMessage(amount.get(position) + " RON\n" +  date.get(position) + " " + time.get(position) + "\n" + category.get(position))
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dataBase = new DatabaseHelper(context);
                                 dataBase.removeFromExpenses((String) amount.get(position),(String) date.get(position),(String) time.get(position));
-                                Log.d("DataBase", "Removed from expenses " + amount.get(position) + " RON, from: " + date.get(position) + " " + time.get(position));
+                                Log.d("DataBase", "Removed from expenses: RecyclerViewPosition: " + position+ ",  " + amount.get(position) + " RON, from: " + date.get(position) + " " + time.get(position));
                                 type.remove(position);
                                 amount.remove(position);
                                 category.remove(position);
@@ -85,6 +85,7 @@ public class RecyclerViewCustomAdapter extends RecyclerView.Adapter<RecyclerView
                                 date.remove(position);
                                 time.remove(position);
                                 notifyItemRemoved(position);
+                                notifyItemRangeChanged(0, amount.size());
 
                                 Intent i = new Intent(BROADCAST_FILTER);
                                 i.putExtra("item_deleted", true);

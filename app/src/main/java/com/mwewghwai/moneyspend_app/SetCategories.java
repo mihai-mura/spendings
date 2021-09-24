@@ -20,6 +20,7 @@ public class SetCategories extends SettingsActivity {
 
 //Item declaration
     DatabaseHelper dataBase;
+    Button back_button;
     Button add_category_button;
     ListView category_add_list;
 
@@ -41,8 +42,17 @@ public class SetCategories extends SettingsActivity {
         dataBase = new DatabaseHelper(this);
         add_category_button = findViewById(R.id.add_category_button);
         category_add_list = findViewById(R.id.category_add_list);
+        back_button = findViewById(R.id.set_categories_back_button);
 
         updateCategoryList();
+
+//BackButton
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
 //AddButton
         add_category_button.setOnClickListener(new View.OnClickListener() {

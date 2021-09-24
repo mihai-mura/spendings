@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         cash_button.setClickable(true);
         card_button.setChecked(false);
         card_button.setClickable(true);
+        category_button.setText("Category");
 
         updateAmountTextView("thisMonth");
 
@@ -149,22 +150,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 boolean type = false;
-                float amount;
+                String amount;
                 String category;
                 String note;
                 String date;
                 String time;
 
-                if(cash_button.isChecked()){
-                    type = false;
-                }
-                else if(card_button.isChecked())
-                    type = true;
 
-                if((cash_button.isChecked() || card_button.isChecked()) && category_button.getText() != "Category" && amount_add.getText().toString() != "") {
+                if((cash_button.isChecked() || card_button.isChecked()) && amount_add.length() != 0) {
 
-                    amount = Float.valueOf(amount_add.getText().toString());
-                    category = String.valueOf(category_button.getText());
+                    if(cash_button.isChecked()){
+                        type = false;
+                    }
+                    else if(card_button.isChecked())
+                        type = true;
+
+                    amount = amount_add.getText().toString();
+
+                    if(category_button.getText() == "Category") {
+                        category = "";
+                    }
+                    else
+                        category = String.valueOf(category_button.getText());
                     note = note_add.getText().toString();
                     Calendar calendar = Calendar.getInstance();
                     SimpleDateFormat format_date = new SimpleDateFormat("d MMM yyyy");
@@ -184,16 +191,16 @@ public class MainActivity extends AppCompatActivity {
                     category_button.setText("Category");
                     note_add.setText("");
 
-                    hideKeyboard(MainActivity.this);
+                    add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
                     //delay
                     final Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            hideKeyboard(MainActivity.this);
                         }
-                    }, 100);
+                    }, 300);
 
                 }
                 else{
@@ -226,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
         updateAmountTextView("thisMonth");
     }
 
-    private void addData(boolean type, float amount, String category, String note, String date, String time){
+    private void addData(boolean type, String amount, String category, String note, String date, String time){
         boolean insertData = dataBase.addDataExpenses(type, amount, category, note, date, time);
         if(insertData == true){
             Log.d("DataBase", "Inserted to Expenses table: type: " + type + ", amount: " + amount + ", category: " + category + ", note: " + note + ", date and time: " + date + " "+ time);

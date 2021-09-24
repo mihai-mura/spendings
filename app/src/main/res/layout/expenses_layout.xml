@@ -24,7 +24,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="30dp">
 
-            <Button
+            <android.widget.Button
                 android:id="@+id/expenses_back_button"
                 android:layout_width="11.25dp"
                 android:layout_height="20dp"
@@ -53,7 +53,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 />
 
-            <Button
+            <android.widget.Button
                 android:id="@+id/calendar_button"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
@@ -143,6 +143,17 @@
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/selected_date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:text=""
+            android:fontFamily="@font/montserrat"
+            android:textSize="14sp"
+            android:textColor="@color/Grey2"/>
 
         <Space
             android:layout_width="match_parent"
