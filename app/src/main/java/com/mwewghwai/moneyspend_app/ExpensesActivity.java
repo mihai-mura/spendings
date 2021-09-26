@@ -140,7 +140,7 @@ public class ExpensesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Calendar calendar = Calendar.getInstance();
-                new DatePickerDialog(ExpensesActivity.this, date, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                new DatePickerDialog(ExpensesActivity.this, R.style.DatePickerDialog, date, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
                         .show();
 
             }

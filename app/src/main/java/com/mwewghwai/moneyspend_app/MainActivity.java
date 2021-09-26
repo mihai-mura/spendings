@@ -1,5 +1,6 @@
 package com.mwewghwai.moneyspend_app;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -156,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
                 String date;
                 String time;
 
-
                 if((cash_button.isChecked() || card_button.isChecked()) && amount_add.length() != 0) {
 
                     if(cash_button.isChecked()){
@@ -166,6 +166,12 @@ public class MainActivity extends AppCompatActivity {
                         type = true;
 
                     amount = amount_add.getText().toString();
+                    if(amount.contains(".")) {
+                        int decimals = amount.length() - amount.indexOf(".") - 1;
+                        if(decimals > 2){
+                            amount = amount.substring(0, amount.length() - decimals + 2);
+                        }
+                    }
 
                     if(category_button.getText() == "Category") {
                         category = "";
@@ -193,14 +199,19 @@ public class MainActivity extends AppCompatActivity {
 
                     add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-                    //delay
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
+                    add_popup.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
                         @Override
-                        public void run() {
-                            hideKeyboard(MainActivity.this);
+                        public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                            if(newState == BottomSheetBehavior.STATE_COLLAPSED)
+                                hideKeyboard(MainActivity.this);
+
                         }
-                    }, 300);
+
+                        @Override
+                        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+                        }
+                    });
 
                 }
                 else{

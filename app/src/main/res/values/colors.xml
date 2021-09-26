@@ -2,10 +2,10 @@
 <resources>
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#FFFFFF</color>
+    <color name="colorAccent">#000000</color>
     <color name="homeBackground">#F7F7F7</color>
     <color name="Grey">#E0E0E0</color>
     <color name="Grey2">#909090</color>
-    <color name="colorAccent">#5F4BB6</color>
     <color name="DarkSpringGreen">#1C7340</color>
     <color name="UnitedNationsBlue">#4A8FE7</color>
     <color name="PlumpPurple">#5F4BB6</color>
