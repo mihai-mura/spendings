@@ -52,7 +52,7 @@ public class RecyclerViewCustomAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if(!type.get(position)){
             holder.cash_card.setBackgroundResource(R.drawable.ic_cash_outline);
         }
@@ -65,40 +65,41 @@ public class RecyclerViewCustomAdapter extends RecyclerView.Adapter<RecyclerView
         holder.date.setText((CharSequence) date.get(position));
         holder.time.setText((CharSequence) time.get(position));
 
-        //ToDo:change delete dialog
         holder.rootLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                AlertDialog.Builder dialog = new AlertDialog.Builder(context)
-                        .setTitle("Delete record")
-                        .setMessage(amount.get(position) + " RON\n" +  date.get(position) + " " + time.get(position) + "\n" + category.get(position))
-                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dataBase = new DatabaseHelper(context);
-                                dataBase.removeFromExpenses((String) amount.get(position),(String) date.get(position),(String) time.get(position));
-                                Log.d("DataBase", "Removed from expenses: RecyclerViewPosition: " + position+ ",  " + amount.get(position) + " RON, from: " + date.get(position) + " " + time.get(position));
-                                type.remove(position);
-                                amount.remove(position);
-                                category.remove(position);
-                                note.remove(position);
-                                date.remove(position);
-                                time.remove(position);
-                                notifyItemRemoved(position);
-                                notifyItemRangeChanged(0, amount.size());
+                if(context.getClass() == ExpensesActivity.class){
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(context)
+                            .setTitle("Delete record")
+                            .setMessage(amount.get(position) + " RON\n" + date.get(position) + " " + time.get(position) + "\n" + category.get(position))
+                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dataBase = new DatabaseHelper(context);
+                                    dataBase.removeFromExpenses((String) amount.get(position), (String) date.get(position), (String) time.get(position));
+                                    Log.d("DataBase", "Removed from expenses: RecyclerViewPosition: " + position + ",  " + amount.get(position) + " RON, from: " + date.get(position) + " " + time.get(position));
+                                    type.remove(position);
+                                    amount.remove(position);
+                                    category.remove(position);
+                                    note.remove(position);
+                                    date.remove(position);
+                                    time.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(0, amount.size());
 
-                                Intent i = new Intent(BROADCAST_FILTER);
-                                i.putExtra("item_deleted", true);
-                                context.sendBroadcast(i);
+                                    Intent i = new Intent(BROADCAST_FILTER);
+                                    i.putExtra("item_deleted", true);
+                                    context.sendBroadcast(i);
 
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                dialog.show();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                    dialog.show();
+                }
 
             }
         });

@@ -66,7 +66,6 @@ public class SetCategories extends SettingsActivity {
             public void onClick(View v) {
                 String category = category_to_add.getText().toString();
                 if(category.matches("")){
-                    //ChangeToasts
                     Toast.makeText(SetCategories.this, "Field empty!", Toast.LENGTH_LONG).show();
                 }
                 else{
@@ -78,7 +77,6 @@ public class SetCategories extends SettingsActivity {
 
                     }
                     else{
-                        //ChangeToasts
                         Toast.makeText(SetCategories.this, "Category already exists!", Toast.LENGTH_LONG).show();
                     }
 
@@ -89,7 +87,7 @@ public class SetCategories extends SettingsActivity {
         category_add_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,final int position, long id) {
-//ToDo:design for delete category dialog
+
                 final Object item = category_list_adapter.getItem(position);
 
                 AlertDialog.Builder dialog = new AlertDialog.Builder(SetCategories.this)
@@ -126,7 +124,6 @@ public class SetCategories extends SettingsActivity {
             }
             else{
                 Log.d("DataBase", "Data insertion to Category table failed");
-                //ChangeToasts
                 Toast.makeText(SetCategories.this, "Something went wrong!", Toast.LENGTH_LONG);
 
                 return false;
@@ -144,18 +141,18 @@ public class SetCategories extends SettingsActivity {
         updateCategoryList();
     }
 
-    public void updateCategoryList(){
+    private void updateCategoryList(){
         final ArrayAdapter category_list_adapter = new ArrayAdapter(this,R.layout.textcenter_listview,category_array);
         category_array.clear();
         //DataBase -> List
-        Cursor data = dataBase.getContent("Categories", null);
+        Cursor data = dataBase.getContent("Categories", "");
         while(data.moveToNext()){
             category_array.add(data.getString(1));
         }
         category_add_list.setAdapter(category_list_adapter);
     }
 
-    public static void hideKeyboard(Activity activity) {
+    private static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
         View view = activity.getCurrentFocus();

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -18,13 +17,15 @@ import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.datepicker.MaterialDatePicker;
+import androidx.recyclerview.widget.SnapHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import travel.ithaka.android.horizontalpickerlib.PickerLayoutManager;
 
 public class ExpensesActivity extends AppCompatActivity {
 
@@ -42,6 +43,8 @@ public class ExpensesActivity extends AppCompatActivity {
     TextView cash_amount_text;
     TextView card_amount_text;
     TextView selected_date;
+    FilterCategoryRVAdapter categoryRVAdapter;
+    RecyclerView filter_category;
 
 //Variables
     ArrayList<Boolean> type = new ArrayList<>();
@@ -50,6 +53,10 @@ public class ExpensesActivity extends AppCompatActivity {
     ArrayList<String> note = new ArrayList<>();
     ArrayList<String> date = new ArrayList<>();
     ArrayList<String> time = new ArrayList<>();
+    ArrayList<String> filter_category_array = new ArrayList<>();
+    String selected_filter_category = "All";
+    String selected_interval = "thisMonth";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +80,7 @@ public class ExpensesActivity extends AppCompatActivity {
         cash_amount_text = findViewById(R.id.cash_amount_text);
         card_amount_text = findViewById(R.id.card_amount_text);
         selected_date = findViewById(R.id.selected_date_text);
+        filter_category = findViewById(R.id.filter_category);
 
 //Initializations
         today_tbutton.setChecked(false);
@@ -82,11 +90,15 @@ public class ExpensesActivity extends AppCompatActivity {
         all_tbutton.setChecked(false);
         all_tbutton.setEnabled(true);
 
-        populateRecycleView("thisMonth");
+        populateRecycleView("thisMonth", selected_filter_category);
         updateAmountTextViews("thisMonth");
         updateSelectedDate(null);
 
-        //
+
+        setFilterCategory();
+
+
+        //Calendar Date Set
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
             @Override
@@ -100,7 +112,8 @@ public class ExpensesActivity extends AppCompatActivity {
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 date = format_date.format(calendar.getTime());
 
-                populateRecycleView(date);
+                selected_interval = date;
+                populateRecycleView(date, selected_filter_category);
                 updateAmountTextViews(date);
                 updateSelectedDate(date);
 
@@ -186,7 +199,8 @@ public class ExpensesActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    populateRecycleView("today");
+                    selected_interval = "today";
+                    populateRecycleView("today", selected_filter_category);
                     updateAmountTextViews("today");
                     updateSelectedDate(null);
 
@@ -198,7 +212,8 @@ public class ExpensesActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    populateRecycleView("thisMonth");
+                    selected_interval = "thisMonth";
+                    populateRecycleView("thisMonth", selected_filter_category);
                     updateAmountTextViews("thisMonth");
                     updateSelectedDate(null);
 
@@ -210,7 +225,8 @@ public class ExpensesActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    populateRecycleView(null);
+                    selected_interval = "";
+                    populateRecycleView("", selected_filter_category);
                     updateAmountTextViews("");
                     updateSelectedDate(null);
 
@@ -232,8 +248,11 @@ public class ExpensesActivity extends AppCompatActivity {
                 interval = "";
 
             updateAmountTextViews(interval);
-
-            Cursor data = dataBase.getContent("Expenses", interval);
+            Cursor data;
+            if(selected_filter_category.equals("All"))
+                data = dataBase.getContent("Expenses", interval);
+            else
+                data = dataBase.getContent("Expenses", interval, selected_filter_category);
             if(data != null && data.getCount() == 0){
                 empty_state_layout.setVisibility(ConstraintLayout.VISIBLE);
             }
@@ -252,7 +271,7 @@ public class ExpensesActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void populateRecycleView(String interval){
+    private void populateRecycleView(String interval, String filter_category){
         //empty arrays
         type.clear();
         amount.clear();
@@ -261,8 +280,13 @@ public class ExpensesActivity extends AppCompatActivity {
         date.clear();
         time.clear();
 
+        Cursor data;
         //dataBase->Arrays
-        Cursor data = dataBase.getContent("Expenses", interval);
+        if(filter_category.equals("All"))
+            data = dataBase.getContent("Expenses", interval);
+        else
+            data = dataBase.getContent("Expenses", interval, filter_category);
+
         if(data.getCount() == 0){
                 empty_state_layout.setVisibility(ConstraintLayout.VISIBLE);
 
@@ -304,9 +328,9 @@ public class ExpensesActivity extends AppCompatActivity {
     }
 
     private void updateAmountTextViews(String interval){
-        float amount = dataBase.getAmount(interval, "");
-        float cash_amount = dataBase.getAmount(interval, "cash");
-        float card_amount = dataBase.getAmount(interval, "card");
+        float amount = dataBase.getAmount(interval, "", selected_filter_category);
+        float cash_amount = dataBase.getAmount(interval, "cash", selected_filter_category);
+        float card_amount = dataBase.getAmount(interval, "card", selected_filter_category);
 
         if(amount == (int)amount){
             expenses_amount.setText((int)amount + " RON");
@@ -333,6 +357,49 @@ public class ExpensesActivity extends AppCompatActivity {
             selected_date.setText("");
         else
             selected_date.setText(date);
+    }
+
+    private void setFilterCategory(){
+
+        PickerLayoutManager pickerLayoutManager = new PickerLayoutManager(this, PickerLayoutManager.HORIZONTAL, false);
+        pickerLayoutManager.setChangeAlpha(true);
+        pickerLayoutManager.setScaleDownBy(0.99f);
+        pickerLayoutManager.setScaleDownDistance(0.8f);
+
+
+        pickerLayoutManager.setOnScrollStopListener(new PickerLayoutManager.onScrollStopListener() {
+            @Override
+            public void selectedView(View view) {
+
+                TextView selected_category;
+                String selected;
+
+                selected_category = view.findViewById(R.id.filter_category_text);
+                selected = selected_category.getText().toString();
+                selected_filter_category = selected;
+
+                populateRecycleView(selected_interval, selected_filter_category);
+                updateAmountTextViews(selected_interval);
+
+            }
+        });
+
+        SnapHelper snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(filter_category);
+
+        filter_category.setLayoutManager(pickerLayoutManager);
+
+        filter_category_array.clear();
+        filter_category_array.add("All");
+
+        Cursor data = dataBase.getContent("Categories", "");
+        while(data.moveToNext()){
+            filter_category_array.add(data.getString(1));
+        }
+
+        categoryRVAdapter = new FilterCategoryRVAdapter(ExpensesActivity.this, filter_category_array);
+        filter_category.setAdapter(categoryRVAdapter);
+
     }
 
 }

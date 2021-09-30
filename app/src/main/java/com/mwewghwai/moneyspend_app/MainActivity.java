@@ -2,19 +2,26 @@ package com.mwewghwai.moneyspend_app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.TypedArrayUtils;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,8 +32,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.util.Collections;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,15 +53,24 @@ public class MainActivity extends AppCompatActivity {
     EditText amount_add;
     EditText note_add;
     TextView monthly_spent_text;
+    RecyclerView expenses_list;
+    RecyclerViewCustomAdapter customAdapter;
 
 //Variables
 
+    private ArrayList<Boolean> type = new ArrayList<>();
+    private ArrayList<String> amount = new ArrayList<>();
+    private ArrayList<String> category = new ArrayList<>();
+    private ArrayList<String> note = new ArrayList<>();
+    private ArrayList<String> date = new ArrayList<>();
+    private ArrayList<String> time = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_main);
+
 
 //Variables
         final ArrayList<String> category_array = new ArrayList<>();
@@ -77,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         note_add = findViewById(R.id.introduce_note);
         expenses_button = findViewById(R.id.expenses);
         monthly_spent_text = findViewById(R.id.monthly_spend_text);
+        expenses_list = findViewById(R.id.home_rview);
 
 //Initializations
         add_popup.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -88,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
         category_button.setText("Category");
 
         updateAmountTextView("thisMonth");
+        if(!dataBase.isEmpty("Expenses"))
+            populateRecycleView();
 
 //Buttons
 
@@ -97,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //DataBase -> List
                 category_array.clear();
-                Cursor data = dataBase.getContent("Categories", null);
+                Cursor data = dataBase.getContent("Categories", "");
                 while(data.moveToNext()){
                     category_array.add(data.getString(1));
                 }
@@ -187,6 +205,8 @@ public class MainActivity extends AppCompatActivity {
 
                     addData(type, amount, category, note, date, time);
                     updateAmountTextView("thisMonth");
+                    if(!dataBase.isEmpty("Expenses"))
+                        populateRecycleView();
 
                     //reinitiate bottom sheet components
                     cash_button.setChecked(false);
@@ -215,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 else{
-                    //ChangeToasts
                     Toast.makeText(MainActivity.this, "Enter all fields!", Toast.LENGTH_LONG).show();
                 }
 
@@ -242,6 +261,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         updateAmountTextView("thisMonth");
+        if(!dataBase.isEmpty("Expenses"))
+            populateRecycleView();
     }
 
     private void addData(boolean type, String amount, String category, String note, String date, String time){
@@ -259,13 +280,80 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void updateAmountTextView(String interval){
-        float amount = dataBase.getAmount(interval, "");
+        float amount = dataBase.getAmount(interval, "", "All");
         if(amount == (int)amount){
             monthly_spent_text.setText((int)amount + " RON");
         }
         else
             monthly_spent_text.setText(amount + " RON");
 
+    }
+
+    private void populateRecycleView(){
+        //empty arrays
+        type.clear();
+        amount.clear();
+        category.clear();
+        note.clear();
+        date.clear();
+        time.clear();
+
+        //dataBase->Arrays
+        Cursor data = dataBase.getContent("Expenses", "thisMonth");
+        int repeat = 0;
+        data.getCount();
+
+        if(data.getCount() == 1)
+            repeat = 1;
+
+        else if(data.getCount() == 2)
+            repeat = 2;
+
+        else if(data.getCount() >= 3)
+            repeat = 3;
+
+
+        for(int i = 0; i < repeat; i++){
+
+            switch(i){
+                case 0 : data.moveToLast();break;
+                case 1 : data.moveToPrevious();break;
+                case 2 : data.moveToPrevious();break;
+
+            }
+
+            if (data.getInt(1) == 0) {
+                type.add(false);
+            } else if (data.getInt(1) == 1) {
+                type.add(true);
+            }
+
+
+            if (data.getFloat(2) == data.getInt(2)) {
+                amount.add(String.valueOf(data.getInt(2)));
+            } else {
+                amount.add(String.valueOf(data.getFloat(2)));
+            }
+            category.add(data.getString(3));
+            note.add(data.getString(4));
+            date.add(data.getString(5));
+            time.add(data.getString(6));
+        }
+
+        Collections.reverse(type);
+        Collections.reverse(amount);
+        Collections.reverse(category);
+        Collections.reverse(note);
+        Collections.reverse(date);
+        Collections.reverse(time);
+
+        //without this recyclerView does not show
+        LinearLayoutManager llm = new LinearLayoutManager(MainActivity.this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        expenses_list.setLayoutManager(llm);
+
+        customAdapter = new RecyclerViewCustomAdapter(MainActivity.this, type, amount, category, note, date, time);
+        expenses_list.setAdapter(customAdapter);
     }
 
     private void updateCategoryHeader(){
@@ -295,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static void hideKeyboard(Activity activity) {
+    private static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         //Find the currently focused view, so we can grab the correct window token from it.
         View view = activity.getCurrentFocus();
